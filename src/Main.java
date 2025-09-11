@@ -16,13 +16,9 @@ public class Main {
     static ArrayList<Integer> rightwardPointer = new ArrayList<>();
 
     // a stopwatch tool just for fun
-    static long nanoTime;
+    static long nanoTime = System.nanoTime();
 
     public static void main(String[] args) throws FileNotFoundException {
-        // setting up the persistent-storage file
-        File file = new File("save_progress.txt");
-        openProgram(file);
-
         // setting up the first element
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
         mainArray.add(null);
@@ -39,19 +35,25 @@ public class Main {
         positionIndex_withinMainArray_lastElementOfText = 1; // final value
         System.out.println("length of mainArray (lastElementSetup): " + mainArray.size());
 
+        // setting up the persistent-storage file
+        File file = new File("saveProgress.txt");
+        openProgram(file);
 
         new JFrameSetup(); // JFrame: Java GUI software
     }
 
     public static void openProgram(File file) throws FileNotFoundException {
-        Main.nanoTime = System.nanoTime();
+        Main.nanoTime = System.nanoTime() - nanoTime;
+        System.out.println("Time progress since program start: " + nanoTime + " nanoseconds.");
 
         try {
             Scanner scanner = new Scanner(file); // instructs a scanner to read through the saveProgress.txt file
             scanner.useDelimiter(""); // scanner-delimiter set to an empty String
             while (scanner.hasNext()) {
                 char ch = scanner.next().charAt(0); // going through file character-by-character
-                Main.insertChar_withinText(ch);
+                if (scanner.hasNext()) {
+                    Main.insertChar_withinText(ch);
+                }
             }
 
             positionIndex_withinMainArray_cursor = positionIndex_withinMainArray_lastElementOfText;
@@ -62,8 +64,8 @@ public class Main {
     }
 
     public static void saveAndQuit() {
-        nanoTime = System.nanoTime() - nanoTime;
-        System.out.println("Time progressed since program start: " + nanoTime + " nanoseconds.");
+        System.out.println("Time progressed since program start: " + (System.nanoTime() - nanoTime) + " nanoseconds.");
+        nanoTime = System.nanoTime();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("saveProgress.txt"))) {
             for (int loopIndex = Main.positionIndex_withinMainArray_firstElementOfText;
@@ -77,7 +79,7 @@ public class Main {
 
             }
             System.out.println("Character array written to saveProgress.txt.");
-            System.out.println("Time progressed throughout file-writing process: " + (System.nanoTime() - nanoTime) + " nanoseconds.");
+            System.out.println("Time elapsed throughout the file-saving process: " + (System.nanoTime() - nanoTime) + " nanoseconds.");
 
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
@@ -97,7 +99,6 @@ public class Main {
     }
 
     public static void insertChar_withinText(char insertedChar) {
-        System.out.println("length of mainArray (inserting): " + mainArray.size());
         mainArray.add(insertedChar);
         leftwardPointer.add(null);
         rightwardPointer.add(null);
@@ -147,9 +148,6 @@ public class Main {
 
     }
     public static void deleteChar_withinText() {
-        System.out.println("Cursor element: " + positionIndex_withinMainArray_cursor);
-        System.out.println("Left element: " + leftwardPointer.get(positionIndex_withinMainArray_cursor));
-        System.out.println("LeftLeft element: " + leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)));
 
         if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) != null) {
             if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_firstElementOfText) {
