@@ -1,7 +1,5 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
-import java.util.Scanner;
 
 public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
 
@@ -45,10 +43,16 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             }
         } else if (e.getKeyCode() == 37) {
             System.out.println("Hello1");
-            Main.cursor_moveLeftOnly_withinText();
+            if (Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor) != Main.positionIndex_withinMainArray_firstElementOfText) {
+                Main.cursor_moveLeftOnly_withinText_void();
+                jframeGUI.cursor_moveLeftOnly_withinText(Main.cursor_moveLeftOnly_withinText_char());
+            }
         } else if (e.getKeyCode() == 39) {
             System.out.println("Hello2");
-            Main.cursor_moveRightOnly_withinText();
+            if (Main.positionIndex_withinMainArray_cursor != Main.positionIndex_withinMainArray_lastElementOfText) {
+                Main.cursor_moveLeftOnly_withinText_void();
+                jframeGUI.cursor_moveRightOnly_withinText(Main.cursor_moveRightOnly_withinText_char());
+            }
         }
     }
 

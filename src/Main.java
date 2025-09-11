@@ -80,6 +80,7 @@ public class Main {
             }
             System.out.println("Character array written to saveProgress.txt.");
             System.out.println("Time elapsed throughout the file-saving process: " + (System.nanoTime() - nanoTime) + " nanoseconds.");
+            System.exit(0);
 
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
@@ -87,15 +88,18 @@ public class Main {
     }
 
 
-    public static void cursor_moveRightOnly_withinText() {
-        if (positionIndex_withinMainArray_cursor != positionIndex_withinMainArray_lastElementOfText) {
-            positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
-        }
+    public static char cursor_moveRightOnly_withinText_char() {
+        return mainArray.get(rightwardPointer.get(positionIndex_withinMainArray_cursor));
     }
-    public static void cursor_moveLeftOnly_withinText() {
-        if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
-            positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
-        }
+    public static char cursor_moveLeftOnly_withinText_char() {
+        return mainArray.get(leftwardPointer.get(positionIndex_withinMainArray_cursor));
+    }
+
+    public static void cursor_moveRightOnly_withinText_void() {
+        positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
+    }
+    public static void cursor_moveLeftOnly_withinText_void() {
+        positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
     }
 
     public static void insertChar_withinText(char insertedChar) {
@@ -118,9 +122,9 @@ public class Main {
         if (positionIndex_withinMainArray_cursor == positionIndex_withinMainArray_lastElementOfText) { // if cursor is at the right-edge of the document
             if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
                 // back-and-forth pointer-pair: cursorMinus2Element <> newElement
-                cursor_moveLeftOnly_withinText();
+                cursor_moveLeftOnly_withinText_void();
                 int minus2PositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
-                cursor_moveRightOnly_withinText();
+                cursor_moveRightOnly_withinText_void();
                 rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, mainArray.size() - 1);
                 leftwardPointer.set(mainArray.size() - 1, minus2PositionIndex_withinMainArray_cursor);
             }
@@ -132,9 +136,9 @@ public class Main {
         else {
             if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
                 // setting up the cursorMinus2Element
-                cursor_moveLeftOnly_withinText();
+                cursor_moveLeftOnly_withinText_void();
                 int minus2PositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
-                cursor_moveRightOnly_withinText();
+                cursor_moveRightOnly_withinText_void();
 
                 // back-and-forth pointer-pair: newElement <> cursorElement
                 leftwardPointer.set(positionIndex_withinMainArray_cursor, mainArray.size() - 1);
@@ -152,11 +156,11 @@ public class Main {
         if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) != null) {
             if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_firstElementOfText) {
                 // setting up the cursorMinus2Element
-                cursor_moveLeftOnly_withinText();
-                cursor_moveLeftOnly_withinText();
+                cursor_moveLeftOnly_withinText_void();
+                cursor_moveLeftOnly_withinText_void();
                 int minus2PositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
-                cursor_moveRightOnly_withinText();
-                cursor_moveRightOnly_withinText();
+                cursor_moveRightOnly_withinText_void();
+                cursor_moveRightOnly_withinText_void();
 
                 // back-and-forth pointer-pair repairing: cursorMinus2Element <> cursorElement
                 leftwardPointer.set(positionIndex_withinMainArray_cursor, minus2PositionIndex_withinMainArray_cursor);
