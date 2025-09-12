@@ -24,7 +24,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
         jframeGUI.setFocusable(true);
         jframeGUI.requestFocusInWindow();
 
-        jframeGUI.redrawAllText();
+        jframeGUI.redrawAllText_withWordWrap();
     }
 
 
@@ -32,7 +32,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
     // KeyListener methods
     @Override
     public void keyTyped(KeyEvent e) {
-        if (Character.isLetterOrDigit(e.getKeyChar())) { // insertion-key typed (alphanumeric character)
+        if (Character.isLetterOrDigit(e.getKeyChar()) || e.getKeyChar() == ' ' || e.getKeyChar() == ',' || e.getKeyChar() == '.' || e.getKeyChar() == '!' || e.getKeyChar() == '?' || e.getKeyChar() == '(' || e.getKeyChar() == ')') { // insertion-key typed (alphanumeric character)
             Main.insertChar_withinText(e.getKeyChar());
             jframeGUI.addChar(e.getKeyChar());
         }
@@ -44,7 +44,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             char ch = Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor));
             Main.deleteChar_withinText();
             if (Main.activateJFrameGUI) {
-                jframeGUI.redrawAllText();
+                jframeGUI.redrawAllText_withWordWrap();
                 jframeGUI.cursor_moveLeftOnly_withinText(ch);
                 Main.activateJFrameGUI = false;
             }

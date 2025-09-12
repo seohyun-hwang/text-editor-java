@@ -32,23 +32,22 @@ public class JFrameGUI extends JPanel {
 
     public void cursor_moveRightOnly_withinText(char ch) {
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
-        wordWrapping();
+        redrawAllText_withWordWrap();
     }
 
     public void cursor_moveLeftOnly_withinText(char ch) {
         cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
-        wordWrapping();
+        redrawAllText_withWordWrap();
     }
 
     public void addChar(char ch) {
         graphics_2D.drawString(String.valueOf(ch), cursorX, cursorY);
+        redrawAllText_withWordWrap();
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
-        repaint();
-        wordWrapping();
     }
     public void deleteChar(char ch) {
         cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
-        wordWrapping();
+        redrawAllText_withWordWrap();
     }
 
 
@@ -64,12 +63,14 @@ public class JFrameGUI extends JPanel {
         }
     }
 
+    public void redrawAllText_withWordWrap() {
+        graphics_2D.setColor(Color.lightGray);
+        graphics_2D.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 
-
-    public void wordWrapping() {
-        int panelWidth = buffer.getWidth() - 20; // margin
+        graphics_2D.setColor(Color.BLACK);
         int drawX = 20;
         int drawY = 40;
+        int panelWidth = buffer.getWidth() - 20;
 
         for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
              loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
@@ -78,7 +79,6 @@ public class JFrameGUI extends JPanel {
             char ch = Main.mainArray.get(loopIndex);
             int charWidth = fontMetrics.charWidth(ch);
 
-            // wrap to next line if overflow
             if (drawX + charWidth > panelWidth) {
                 drawX = 20;
                 drawY += fontMetrics.getHeight();
@@ -87,42 +87,12 @@ public class JFrameGUI extends JPanel {
             graphics_2D.drawString(String.valueOf(ch), drawX, drawY);
 
             if (loopIndex == Main.positionIndex_withinMainArray_cursor) {
-                cursorX = drawX + charWidth;
+                cursorX = drawX;
                 cursorY = drawY;
             }
 
             drawX += charWidth;
+            repaint();
         }
-    }
-    public void redrawAllText() {
-        // clearing everything
-        graphics_2D.setColor(Color.lightGray); // sets everything to white
-        graphics_2D.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
-
-        // reset drawing color to black
-        graphics_2D.setColor(Color.BLACK);
-
-
-        // resetting the drawing position
-        int drawX = 20;
-        cursorX = 20;
-        cursorY = 40;
-
-        // redrawing from scratch by traversing the LinkedList
-        for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
-             loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
-             loopIndex = Main.rightwardPointer.get(loopIndex)) {
-
-            char ch = Main.mainArray.get(loopIndex);
-            graphics_2D.drawString(String.valueOf(ch), drawX, cursorY);
-
-            if (loopIndex == Main.positionIndex_withinMainArray_cursor) {
-                cursorX = drawX + fontMetrics.charWidth(ch); // cursor after this char
-            }
-
-            drawX += fontMetrics.charWidth(ch);
-            wordWrapping();
-        }
-        repaint();
     }
 }

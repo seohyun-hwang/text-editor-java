@@ -77,16 +77,6 @@ public class Main {
                 writer.write(Main.mainArray.get(loopIndex));
 
             }
-
-
-            /*for (int loopIndex = rightwardPointer.get(positionIndex_withinMainArray_firstElementOfText);
-                 loopIndex < leftwardPointer.get(positionIndex_withinMainArray_lastElementOfText);
-                 loopIndex = rightwardPointer.get(loopIndex)) {
-
-                char ch = mainArray.get(loopIndex);
-                writer.write(ch);
-
-            }*/
             System.out.println("Character array written to saveProgress.txt.");
             System.out.println("Time elapsed throughout the file-saving process: " + (System.nanoTime() - nanoTime) + " nanoseconds.");
 
