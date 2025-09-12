@@ -18,7 +18,8 @@ public class Main {
     // a stopwatch tool just for fun
     static long nanoTime = System.nanoTime();
 
-    public static void main(String[] args) throws FileNotFoundException {
+
+    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
         // setting up the first element
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
         mainArray.add(null);
@@ -35,7 +36,7 @@ public class Main {
         positionIndex_withinMainArray_lastElementOfText = 1; // final value
         System.out.println("length of mainArray (lastElementSetup): " + mainArray.size());
 
-        // setting up the persistent-storage file
+        // setting up the program's interaction with a persistent-storage file
         File file = new File("saveProgress.txt");
         openProgram(file);
 
@@ -68,23 +69,31 @@ public class Main {
         nanoTime = System.nanoTime();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("saveProgress.txt"))) {
-            for (int loopIndex = Main.positionIndex_withinMainArray_firstElementOfText;
+
+            for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
                  loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
                  loopIndex = Main.rightwardPointer.get(loopIndex)) {
 
-                if (loopIndex != Main.positionIndex_withinMainArray_firstElementOfText) {
-                    char ch = Main.mainArray.get(loopIndex);
-                    writer.write(ch);
-                }
+                writer.write(Main.mainArray.get(loopIndex));
 
             }
+
+
+            /*for (int loopIndex = rightwardPointer.get(positionIndex_withinMainArray_firstElementOfText);
+                 loopIndex < leftwardPointer.get(positionIndex_withinMainArray_lastElementOfText);
+                 loopIndex = rightwardPointer.get(loopIndex)) {
+
+                char ch = mainArray.get(loopIndex);
+                writer.write(ch);
+
+            }*/
             System.out.println("Character array written to saveProgress.txt.");
             System.out.println("Time elapsed throughout the file-saving process: " + (System.nanoTime() - nanoTime) + " nanoseconds.");
-            System.exit(0);
 
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }
+        System.exit(0);
     }
 
 
@@ -96,9 +105,13 @@ public class Main {
     }
 
     public static void cursor_moveRightOnly_withinText_void() {
+        System.out.println("Right-pointer of cursor: " + rightwardPointer.get(positionIndex_withinMainArray_cursor));
+        System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
         positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
     }
     public static void cursor_moveLeftOnly_withinText_void() {
+        System.out.println("Left-pointer of cursor: " + leftwardPointer.get(positionIndex_withinMainArray_cursor));
+        System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
         positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
     }
 
@@ -155,18 +168,18 @@ public class Main {
 
         if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) != null) {
             if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_firstElementOfText) {
-                // setting up the cursorMinus2Element
-                cursor_moveLeftOnly_withinText_void();
-                cursor_moveLeftOnly_withinText_void();
-                int minus2PositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
-                cursor_moveRightOnly_withinText_void();
-                cursor_moveRightOnly_withinText_void();
+                int minus1PositionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+                if (minus1PositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_firstElementOfText) {
+                    return; // nothing to delete
+                }
+
+                int minus2PositionIndex_withinMainArray_cursor = leftwardPointer.get(minus1PositionIndex_withinMainArray_cursor);
+
+                activateJFrameGUI = true;
 
                 // back-and-forth pointer-pair repairing: cursorMinus2Element <> cursorElement
                 leftwardPointer.set(positionIndex_withinMainArray_cursor, minus2PositionIndex_withinMainArray_cursor);
                 rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_cursor);
-
-                activateJFrameGUI = true;
             }
             else {
                 if (leftwardPointer.get(positionIndex_withinMainArray_cursor) > positionIndex_withinMainArray_firstElementOfText) {
@@ -175,6 +188,7 @@ public class Main {
                     rightwardPointer.set(positionIndex_withinMainArray_firstElementOfText, positionIndex_withinMainArray_cursor);
                 }
             }
+            activateJFrameGUI = true;
         }
     }
 }

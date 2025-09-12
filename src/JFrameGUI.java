@@ -5,10 +5,9 @@ import java.awt.image.BufferedImage;
 public class JFrameGUI extends JPanel {
     public BufferedImage buffer;
     public Graphics2D graphics_2D;
-    public int x = 20, y = 40; // cursor position
+    public int cursorX = 20, cursorY = 40; // cursor position
     public FontMetrics fontMetrics;
 
-    public int cursorX = 20, cursorY = 40;
     public boolean cursorVisible = true;
 
 
@@ -24,8 +23,7 @@ public class JFrameGUI extends JPanel {
         graphics_2D.setColor(Color.BLACK); // setting the text to black color
         fontMetrics = graphics_2D.getFontMetrics();
 
-        // timer for vertical blinking cursor
-        Timer timer = new Timer(500, e -> {
+        Timer timer = new Timer(200, e -> {
             cursorVisible = !cursorVisible;
             repaint();
         });
@@ -34,22 +32,23 @@ public class JFrameGUI extends JPanel {
 
     public void cursor_moveRightOnly_withinText(char ch) {
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
-        x += fontMetrics.charWidth(ch); // move cursor right by the width of the character
+        wordWrapping();
     }
 
     public void cursor_moveLeftOnly_withinText(char ch) {
         cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
-        x -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
+        wordWrapping();
     }
 
     public void addChar(char ch) {
-        graphics_2D.drawString(String.valueOf(ch), x, y);
+        graphics_2D.drawString(String.valueOf(ch), cursorX, cursorY);
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
-        x += fontMetrics.charWidth(ch); // move cursor right by the width of the character
         repaint();
+        wordWrapping();
     }
     public void deleteChar(char ch) {
-
+        cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
+        wordWrapping();
     }
 
 
@@ -67,7 +66,34 @@ public class JFrameGUI extends JPanel {
 
 
 
+    public void wordWrapping() {
+        int panelWidth = buffer.getWidth() - 20; // margin
+        int drawX = 20;
+        int drawY = 40;
 
+        for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
+             loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
+             loopIndex = Main.rightwardPointer.get(loopIndex)) {
+
+            char ch = Main.mainArray.get(loopIndex);
+            int charWidth = fontMetrics.charWidth(ch);
+
+            // wrap to next line if overflow
+            if (drawX + charWidth > panelWidth) {
+                drawX = 20;
+                drawY += fontMetrics.getHeight();
+            }
+
+            graphics_2D.drawString(String.valueOf(ch), drawX, drawY);
+
+            if (loopIndex == Main.positionIndex_withinMainArray_cursor) {
+                cursorX = drawX + charWidth;
+                cursorY = drawY;
+            }
+
+            drawX += charWidth;
+        }
+    }
     public void redrawAllText() {
         // clearing everything
         graphics_2D.setColor(Color.lightGray); // sets everything to white
@@ -76,20 +102,27 @@ public class JFrameGUI extends JPanel {
         // reset drawing color to black
         graphics_2D.setColor(Color.BLACK);
 
-        // reset cursor position
-        x = 20;
-        y = 40;
+
+        // resetting the drawing position
+        int drawX = 20;
+        cursorX = 20;
+        cursorY = 40;
 
         // redrawing from scratch by traversing the LinkedList
-        for (int loopIndex = Main.positionIndex_withinMainArray_firstElementOfText;
+        for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
              loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
              loopIndex = Main.rightwardPointer.get(loopIndex)) {
 
-            if (loopIndex != Main.positionIndex_withinMainArray_firstElementOfText) {
-                char ch = Main.mainArray.get(loopIndex);
-                addChar(ch);
+            char ch = Main.mainArray.get(loopIndex);
+            graphics_2D.drawString(String.valueOf(ch), drawX, cursorY);
+
+            if (loopIndex == Main.positionIndex_withinMainArray_cursor) {
+                cursorX = drawX + fontMetrics.charWidth(ch); // cursor after this char
             }
 
+            drawX += fontMetrics.charWidth(ch);
+            wordWrapping();
         }
+        repaint();
     }
 }

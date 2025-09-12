@@ -6,7 +6,12 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
     JFrame jframe;
     JFrameGUI jframeGUI = new JFrameGUI();
 
-    JFrameSetup() {
+    // used later in KeyListener
+    boolean cursor_moveLeftOnly_withinGUI_boolean = true;
+    boolean cursor_moveRightOnly_withinGUI_boolean = true;
+
+
+    JFrameSetup() throws InterruptedException {
         jframe = new JFrame();
         setTitle("Seohyun Hwang's basic text editor");
         setSize(500, 500);
@@ -36,22 +41,39 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            char ch = Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor));
             Main.deleteChar_withinText();
             if (Main.activateJFrameGUI) {
                 jframeGUI.redrawAllText();
+                jframeGUI.cursor_moveLeftOnly_withinText(ch);
                 Main.activateJFrameGUI = false;
             }
         } else if (e.getKeyCode() == 37) {
             System.out.println("Hello1");
-            if (Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor) != Main.positionIndex_withinMainArray_firstElementOfText) {
-                Main.cursor_moveLeftOnly_withinText_void();
-                jframeGUI.cursor_moveLeftOnly_withinText(Main.cursor_moveLeftOnly_withinText_char());
+            if (Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor) != null && Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor) != Main.positionIndex_withinMainArray_firstElementOfText) {
+                if (Main.leftwardPointer.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor)) != Main.positionIndex_withinMainArray_firstElementOfText) {
+                    Main.cursor_moveLeftOnly_withinText_void();
+                    jframeGUI.cursor_moveLeftOnly_withinText(Main.cursor_moveLeftOnly_withinText_char());
+                }
+                else if (cursor_moveLeftOnly_withinGUI_boolean) {
+                    jframeGUI.cursor_moveLeftOnly_withinText(Main.cursor_moveLeftOnly_withinText_char());
+                    cursor_moveLeftOnly_withinGUI_boolean = false;
+                }
+                cursor_moveRightOnly_withinGUI_boolean = true;
             }
         } else if (e.getKeyCode() == 39) {
             System.out.println("Hello2");
+            System.out.println("Cursor: " + Main.positionIndex_withinMainArray_cursor);
             if (Main.positionIndex_withinMainArray_cursor != Main.positionIndex_withinMainArray_lastElementOfText) {
-                Main.cursor_moveLeftOnly_withinText_void();
-                jframeGUI.cursor_moveRightOnly_withinText(Main.cursor_moveRightOnly_withinText_char());
+                char ch = Main.mainArray.get(Main.positionIndex_withinMainArray_cursor);
+                jframeGUI.cursor_moveRightOnly_withinText(ch);
+                Main.cursor_moveRightOnly_withinText_void();
+                cursor_moveLeftOnly_withinGUI_boolean = true;
+            }
+            else if (cursor_moveRightOnly_withinGUI_boolean) {
+                char ch = Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor));
+                jframeGUI.cursor_moveRightOnly_withinText(ch);
+                cursor_moveRightOnly_withinGUI_boolean = false;
             }
         }
     }
