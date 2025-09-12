@@ -6,7 +6,6 @@ public class JFrameGUI extends JPanel {
     public BufferedImage buffer;
     public Graphics2D graphics_2D;
     public int cursorX = 20, cursorY = 40; // cursor position
-    public int drawX = 20, drawY = 40;
     public FontMetrics fontMetrics;
 
     public boolean cursorVisible = true;
@@ -79,17 +78,30 @@ public class JFrameGUI extends JPanel {
 
             char ch = Main.mainArray.get(loopIndex);
 
+            // recording the GUI-cursor-position IF this loopIndex == cursorIndex_withinMainArray
+            if (loopIndex == Main.positionIndex_withinMainArray_cursor) {
+                cursorX = drawX;
+                cursorY = drawY;
+            }
+
             // word-wrapping
             if ((drawX + fontMetrics.charWidth(ch)) > (buffer.getWidth() - 20)) { // keep a 20px margin on the right
                 drawX = 20;
                 drawY += fontMetrics.getHeight();
             }
 
+            // performing the actual drawing
             graphics_2D.drawString(String.valueOf(ch), drawX, drawY);
 
             // increment drawX for next drawing-cycle
             drawX += fontMetrics.charWidth(ch);
             repaint();
+        }
+
+        // recording the GUI-cursor-position IF the cursorIndex_withinMainArray == lastElementIndex_withinMainArray
+        if (Main.positionIndex_withinMainArray_cursor == Main.positionIndex_withinMainArray_lastElementOfText) {
+            cursorX = drawX;
+            cursorY = drawY;
         }
     }
 }

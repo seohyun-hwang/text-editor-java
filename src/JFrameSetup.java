@@ -75,20 +75,6 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
                 // toggle boolean to false
                 Main.cursorGUI_shouldMoveRight = !Main.cursorGUI_shouldMoveRight;
             }
-
-
-
-            /*if (Main.positionIndex_withinMainArray_cursor != Main.positionIndex_withinMainArray_lastElementOfText) {
-                char ch = Main.mainArray.get(Main.positionIndex_withinMainArray_cursor);
-                jframeGUI.cursor_moveRightOnly_withinText(ch);
-                Main.cursor_moveRightOnly_withinText_void();
-                cursor_moveLeftOnly_withinGUI_boolean = true;
-            }
-            else if (cursor_moveRightOnly_withinGUI_boolean) {
-                char ch = Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor));
-                jframeGUI.cursor_moveRightOnly_withinText(ch);
-                cursor_moveRightOnly_withinGUI_boolean = false;
-            }*/
         }
     }
 
