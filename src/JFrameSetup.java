@@ -6,12 +6,8 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
     JFrame jframe;
     JFrameGUI jframeGUI = new JFrameGUI();
 
-    // used later in KeyListener
-    boolean cursor_moveLeftOnly_withinGUI_boolean = true;
-    boolean cursor_moveRightOnly_withinGUI_boolean = true;
 
-
-    JFrameSetup() throws InterruptedException {
+    JFrameSetup() {
         jframe = new JFrame();
         setTitle("Seohyun Hwang's basic text editor");
         setSize(500, 500);

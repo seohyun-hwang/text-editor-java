@@ -44,10 +44,7 @@ public class JFrameGUI extends JPanel {
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
         redrawAllText_withWordWrap();
     }
-    /*public void deleteChar(char ch) {
-        cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
-        //redrawAllText();
-    }*/
+    //public void deleteChar(char ch) {}
 
 
     @Override

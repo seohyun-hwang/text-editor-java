@@ -22,7 +22,7 @@ public class Main {
     static long nanoTime = System.nanoTime();
 
 
-    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+    public static void main(String[] args) {
         // setting up the first element
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
         mainArray.add(null);
@@ -46,7 +46,7 @@ public class Main {
         new JFrameSetup(); // JFrame: Java GUI software
     }
 
-    public static void openProgram(File file) throws FileNotFoundException {
+    public static void openProgram(File file) {
         Main.nanoTime = System.nanoTime() - nanoTime;
         System.out.println("Time progress since program start: " + nanoTime + " nanoseconds.");
 
