@@ -3,11 +3,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
-    // support variables
+    // support variables (within Main class)
     static int positionIndex_withinMainArray_cursor = 1;
     static int positionIndex_withinMainArray_firstElementOfText;
     static int positionIndex_withinMainArray_lastElementOfText;
-    static boolean activateJFrameGUI = false;
+
+    // support variables (for GUI classes)
+    static boolean cursorGUI_shouldMoveLeft = false;
+    static boolean cursorGUI_shouldMoveRight = false;
 
 
     // LinkedList
@@ -86,23 +89,21 @@ public class Main {
         System.exit(0);
     }
 
-
-    public static char cursor_moveRightOnly_withinText_char() {
-        return mainArray.get(rightwardPointer.get(positionIndex_withinMainArray_cursor));
-    }
-    public static char cursor_moveLeftOnly_withinText_char() {
-        return mainArray.get(leftwardPointer.get(positionIndex_withinMainArray_cursor));
-    }
-
     public static void cursor_moveRightOnly_withinText_void() {
         System.out.println("Right-pointer of cursor: " + rightwardPointer.get(positionIndex_withinMainArray_cursor));
         System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
-        positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
+        if (Main.positionIndex_withinMainArray_cursor != Main.positionIndex_withinMainArray_lastElementOfText) {
+            positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
+            cursorGUI_shouldMoveRight = true;
+        }
     }
     public static void cursor_moveLeftOnly_withinText_void() {
         System.out.println("Left-pointer of cursor: " + leftwardPointer.get(positionIndex_withinMainArray_cursor));
         System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
-        positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+        if (Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor) != Main.positionIndex_withinMainArray_firstElementOfText) {
+            positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+            cursorGUI_shouldMoveLeft = true;
+        }
     }
 
     public static void insertChar_withinText(char insertedChar) {
@@ -123,18 +124,17 @@ public class Main {
             }
         }
         if (positionIndex_withinMainArray_cursor == positionIndex_withinMainArray_lastElementOfText) { // if cursor is at the right-edge of the document
-            if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
-                // back-and-forth pointer-pair: cursorMinus2Element <> newElement
-                cursor_moveLeftOnly_withinText_void();
-                int minus2PositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
-                cursor_moveRightOnly_withinText_void();
-                rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, mainArray.size() - 1);
-                leftwardPointer.set(mainArray.size() - 1, minus2PositionIndex_withinMainArray_cursor);
-            }
+            int minus2PositionIndex_withinMainArray_lastElement = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+
+            // back-and-forth pointer-pair repairing: lastMinus2Element <> newElement
+            leftwardPointer.set(mainArray.size() - 1, minus2PositionIndex_withinMainArray_lastElement);
+            rightwardPointer.set(minus2PositionIndex_withinMainArray_lastElement, mainArray.size() - 1);
 
             // back-and-forth pointer-pair: newElement <> lastElement
             leftwardPointer.set(positionIndex_withinMainArray_lastElementOfText, mainArray.size() - 1);
             rightwardPointer.set(mainArray.size() - 1, positionIndex_withinMainArray_lastElementOfText);
+
+
         }
         else {
             if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
@@ -158,27 +158,28 @@ public class Main {
 
         if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) != null) {
             if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_firstElementOfText) {
+
                 int minus1PositionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
                 if (minus1PositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_firstElementOfText) {
                     return; // nothing to delete
                 }
 
                 int minus2PositionIndex_withinMainArray_cursor = leftwardPointer.get(minus1PositionIndex_withinMainArray_cursor);
-
-                activateJFrameGUI = true;
-
                 // back-and-forth pointer-pair repairing: cursorMinus2Element <> cursorElement
                 leftwardPointer.set(positionIndex_withinMainArray_cursor, minus2PositionIndex_withinMainArray_cursor);
                 rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_cursor);
+
+                cursorGUI_shouldMoveLeft = true;
             }
             else {
                 if (leftwardPointer.get(positionIndex_withinMainArray_cursor) > positionIndex_withinMainArray_firstElementOfText) {
                     // back-and-forth pointer-pair repairing: firstElement <> cursorElement
                     leftwardPointer.set(positionIndex_withinMainArray_cursor, positionIndex_withinMainArray_firstElementOfText);
                     rightwardPointer.set(positionIndex_withinMainArray_firstElementOfText, positionIndex_withinMainArray_cursor);
+
+                    cursorGUI_shouldMoveLeft = true;
                 }
             }
-            activateJFrameGUI = true;
         }
     }
 }

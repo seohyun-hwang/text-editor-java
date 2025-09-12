@@ -6,6 +6,7 @@ public class JFrameGUI extends JPanel {
     public BufferedImage buffer;
     public Graphics2D graphics_2D;
     public int cursorX = 20, cursorY = 40; // cursor position
+    public int drawX = 20, drawY = 40;
     public FontMetrics fontMetrics;
 
     public boolean cursorVisible = true;
@@ -41,14 +42,13 @@ public class JFrameGUI extends JPanel {
     }
 
     public void addChar(char ch) {
-        graphics_2D.drawString(String.valueOf(ch), cursorX, cursorY);
-        redrawAllText_withWordWrap();
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
-    }
-    public void deleteChar(char ch) {
-        cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
         redrawAllText_withWordWrap();
     }
+    /*public void deleteChar(char ch) {
+        cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
+        //redrawAllText();
+    }*/
 
 
     @Override
@@ -63,35 +63,32 @@ public class JFrameGUI extends JPanel {
         }
     }
 
-    public void redrawAllText_withWordWrap() {
+
+    public void redrawAllText_withWordWrap() { // redraw all text with word-wrapping
         graphics_2D.setColor(Color.lightGray);
         graphics_2D.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 
         graphics_2D.setColor(Color.BLACK);
         int drawX = 20;
         int drawY = 40;
-        int panelWidth = buffer.getWidth() - 20;
 
+        // traverse the LinkedList from the left-edge to the right-edge
         for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
              loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
              loopIndex = Main.rightwardPointer.get(loopIndex)) {
 
             char ch = Main.mainArray.get(loopIndex);
-            int charWidth = fontMetrics.charWidth(ch);
 
-            if (drawX + charWidth > panelWidth) {
+            // word-wrapping
+            if ((drawX + fontMetrics.charWidth(ch)) > (buffer.getWidth() - 20)) { // keep a 20px margin on the right
                 drawX = 20;
                 drawY += fontMetrics.getHeight();
             }
 
             graphics_2D.drawString(String.valueOf(ch), drawX, drawY);
 
-            if (loopIndex == Main.positionIndex_withinMainArray_cursor) {
-                cursorX = drawX;
-                cursorY = drawY;
-            }
-
-            drawX += charWidth;
+            // increment drawX for next drawing-cycle
+            drawX += fontMetrics.charWidth(ch);
             repaint();
         }
     }
