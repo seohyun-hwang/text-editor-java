@@ -55,9 +55,7 @@ public class Main {
             scanner.useDelimiter(""); // scanner-delimiter set to an empty String
             while (scanner.hasNext()) {
                 char ch = scanner.next().charAt(0); // going through file character-by-character
-                if (scanner.hasNext()) {
-                    Main.insertChar_withinText(ch);
-                }
+                Main.insertChar_withinText(ch);
             }
 
             positionIndex_withinMainArray_cursor = positionIndex_withinMainArray_lastElementOfText;
