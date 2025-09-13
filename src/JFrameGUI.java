@@ -32,12 +32,12 @@ public class JFrameGUI extends JPanel {
 
     public void cursor_moveRightOnly_withinText(char ch) {
         cursorX += fontMetrics.charWidth(ch); // move cursor right by the width of the character
-        redrawAllText_withWordWrap();
+        //redrawAllText_withWordWrap();
     }
 
     public void cursor_moveLeftOnly_withinText(char ch) {
         cursorX -= fontMetrics.charWidth(ch); // move cursor left by the width of the character
-        redrawAllText_withWordWrap();
+        //redrawAllText_withWordWrap();
     }
 
     public void addChar(char ch) {
