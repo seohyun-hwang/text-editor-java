@@ -39,12 +39,11 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
             char ch = Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor));
             Main.deleteChar_withinText();
-            if (Main.cursorGUI_shouldMoveLeft) {
+            if (Main.cursorGUI_shouldAdaptToDeletion) {
                 jframeGUI.cursor_moveLeftOnly_withinText(ch);
                 jframeGUI.redrawAllText_withWordWrap();
 
-                // toggle boolean to false
-                Main.cursorGUI_shouldMoveLeft = !Main.cursorGUI_shouldMoveLeft;
+                Main.cursorGUI_shouldMoveLeft = false;
             }
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             System.out.println("Hello1");
@@ -52,8 +51,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             if (Main.cursorGUI_shouldMoveLeft) {
                 jframeGUI.cursor_moveLeftOnly_withinText(Main.mainArray.get(Main.positionIndex_withinMainArray_cursor));
 
-                // toggle boolean to false
-                Main.cursorGUI_shouldMoveLeft = !Main.cursorGUI_shouldMoveLeft;
+                Main.cursorGUI_shouldMoveLeft = false;
             }
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             System.out.println("Hello2");
@@ -68,8 +66,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
                     jframeGUI.cursor_moveRightOnly_withinText(Main.mainArray.get(Main.positionIndex_withinMainArray_cursor));
                 }
 
-                // toggle boolean to false
-                Main.cursorGUI_shouldMoveRight = !Main.cursorGUI_shouldMoveRight;
+                Main.cursorGUI_shouldMoveRight = false;
             }
         }
     }
