@@ -5,6 +5,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
 
     JFrame jframe;
     JFrameGUI jframeGUI = new JFrameGUI();
+    char[] validTextCharacters = {' ', ',', '.', '!', '?', '(', ')', ';', '/', '-', '+', '@', '#', '%', '&', '*', '^', ':', '<', '>', '`', '~', '=', '_', '\\', '|'};
 
 
     JFrameSetup() {
@@ -25,10 +26,20 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
 
 
 
+    public static boolean isValid_nonalphanumericalTextCharacter(char ch, char[] validTextCharacters) {
+        for (int i = 0; i < validTextCharacters.length; i++) {
+            if (validTextCharacters[i] == ch) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     // KeyListener methods
     @Override
     public void keyTyped(KeyEvent e) {
-        if (Character.isLetterOrDigit(e.getKeyChar()) || e.getKeyChar() == ' ' || e.getKeyChar() == ',' || e.getKeyChar() == '.' || e.getKeyChar() == '!' || e.getKeyChar() == '?' || e.getKeyChar() == '(' || e.getKeyChar() == ')') { // insertion-key typed (alphanumeric character)
+        if (Character.isLetterOrDigit(e.getKeyChar()) || isValid_nonalphanumericalTextCharacter(e.getKeyChar(), validTextCharacters)) { // insertion-key typed (alphanumeric character or any other character defined as valid)
             Main.insertChar_withinText(e.getKeyChar());
             jframeGUI.addChar(e.getKeyChar());
         }

@@ -4,19 +4,19 @@ import java.util.Scanner;
 
 public class Main {
     // general support variables (within Main class)
-    static int positionIndex_withinMainArray_cursor = 1;
-    static int positionIndex_withinMainArray_firstElementOfText;
-    static int positionIndex_withinMainArray_lastElementOfText;
+    static int positionIndex_withinMainArray_cursor;
+    static final int positionIndex_withinMainArray_firstElementOfText = 0;
+    static final int positionIndex_withinMainArray_lastElementOfText = 1;
+
+    // DoublyLinkedList (for text-character sequencing)
+    static ArrayList<Character> mainArray = new ArrayList<>();
+    static ArrayList<Integer> leftwardPointer = new ArrayList<>();
+    static ArrayList<Integer> rightwardPointer = new ArrayList<>();
 
     // support variables (for GUI classes)
     static boolean cursorGUI_shouldMoveLeft = false;
     static boolean cursorGUI_shouldMoveRight = false;
     static boolean cursorGUI_shouldAdaptToDeletion = false;
-
-    // LinkedList
-    static ArrayList<Character> mainArray = new ArrayList<>();
-    static ArrayList<Integer> leftwardPointer = new ArrayList<>();
-    static ArrayList<Integer> rightwardPointer = new ArrayList<>();
 
     // undo/redo
     static ArrayList<Byte> latestActionType = new ArrayList<>(); // 1: insert; -1: deletion
@@ -26,14 +26,12 @@ public class Main {
     // a stopwatch tool just for fun
     static long nanoTime = System.nanoTime();
 
-
     public static void main(String[] args) {
         // setting up the first element
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
         mainArray.add(null);
         leftwardPointer.add(null);
         rightwardPointer.add(1);
-        positionIndex_withinMainArray_firstElementOfText = 0; // final value
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
 
         // setting up the last element
@@ -41,8 +39,10 @@ public class Main {
         mainArray.add(null);
         leftwardPointer.add(0);
         rightwardPointer.add(null);
-        positionIndex_withinMainArray_lastElementOfText = 1; // final value
         System.out.println("length of mainArray (lastElementSetup): " + mainArray.size());
+
+        // defining that the cursor-position should begin at the last element
+        positionIndex_withinMainArray_cursor = 1;
 
         // setting up the program's interaction with a persistent-storage file
         File file = new File("saveProgress.txt");
@@ -116,6 +116,7 @@ public class Main {
 
         undoRedo_referencePointer.add(mainArray.size() - 1);
         latestActionType.add((byte) 1);
+        undoCount = 0;
 
         System.out.println("length of mainArray (inserting): " + mainArray.size());
         if (leftwardPointer.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_firstElementOfText) { // if cursor is at the left-edge of the document
@@ -131,11 +132,11 @@ public class Main {
             }
         }
         if (positionIndex_withinMainArray_cursor == positionIndex_withinMainArray_lastElementOfText) { // if cursor is at the right-edge of the document
-            int minus2PositionIndex_withinMainArray_lastElement = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+            int left2_fromPositionIndex_withinMainArray_lastElement = leftwardPointer.get(positionIndex_withinMainArray_cursor);
 
-            // back-and-forth pointer-pair repairing: lastMinus2Element <> newElement
-            leftwardPointer.set(mainArray.size() - 1, minus2PositionIndex_withinMainArray_lastElement);
-            rightwardPointer.set(minus2PositionIndex_withinMainArray_lastElement, mainArray.size() - 1);
+            // back-and-forth pointer-pair repairing: lastLeft2Element <> newElement
+            leftwardPointer.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_lastElement);
+            rightwardPointer.set(left2_fromPositionIndex_withinMainArray_lastElement, mainArray.size() - 1);
 
             // back-and-forth pointer-pair: newElement <> lastElement
             leftwardPointer.set(positionIndex_withinMainArray_lastElementOfText, mainArray.size() - 1);
@@ -145,18 +146,18 @@ public class Main {
         }
         else {
             if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
-                // setting up the cursorMinus2Element
+                // setting up the cursorLeft2Element
                 cursor_moveLeftOnly_withinText_void();
-                int minus2PositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
+                int left2_fromPositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
                 cursor_moveRightOnly_withinText_void();
 
                 // back-and-forth pointer-pair: newElement <> cursorElement
                 leftwardPointer.set(positionIndex_withinMainArray_cursor, mainArray.size() - 1);
                 rightwardPointer.set(mainArray.size() - 1, positionIndex_withinMainArray_cursor);
 
-                // back-and-forth pointer-pair: cursorMinus2Element <> newElement
-                rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, mainArray.size() - 1);
-                leftwardPointer.set(mainArray.size() - 1, minus2PositionIndex_withinMainArray_cursor);
+                // back-and-forth pointer-pair: cursorLeft2Element <> newElement
+                rightwardPointer.set(left2_fromPositionIndex_withinMainArray_cursor, mainArray.size() - 1);
+                leftwardPointer.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_cursor);
             }
         }
 
@@ -165,18 +166,20 @@ public class Main {
 
         if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) != null) {
             undoRedo_referencePointer.add(positionIndex_withinMainArray_cursor);
+            latestActionType.add((byte) -1);
+            undoCount = 0;
 
             if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_firstElementOfText) {
 
-                int minus1PositionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
-                if (minus1PositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_firstElementOfText) {
+                int left1_fromPositionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+                if (left1_fromPositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_firstElementOfText) {
                     return; // nothing to delete
                 }
 
-                int minus2PositionIndex_withinMainArray_cursor = leftwardPointer.get(minus1PositionIndex_withinMainArray_cursor);
-                // back-and-forth pointer-pair repairing: cursorMinus2Element <> cursorElement
-                leftwardPointer.set(positionIndex_withinMainArray_cursor, minus2PositionIndex_withinMainArray_cursor);
-                rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_cursor);
+                int left2_fromPositionIndex_withinMainArray_cursor = leftwardPointer.get(left1_fromPositionIndex_withinMainArray_cursor);
+                // back-and-forth pointer-pair repairing: cursorLeft2Element <> cursorElement
+                leftwardPointer.set(positionIndex_withinMainArray_cursor, left2_fromPositionIndex_withinMainArray_cursor);
+                rightwardPointer.set(left2_fromPositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_cursor);
 
                 cursorGUI_shouldAdaptToDeletion = true;
             }
@@ -205,7 +208,7 @@ public class Main {
                     }
 
                     int minus2PositionIndex_withinMainArray_cursor = leftwardPointer.get(minus1PositionIndex_withinMainArray_cursor);
-                    // back-and-forth pointer-pair repairing: cursorMinus2Element <> cursorElement
+                    // back-and-forth pointer-pair repairing: cursorLeft2Element <> cursorElement
                     leftwardPointer.set(focusPointer, minus2PositionIndex_withinMainArray_cursor);
                     rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, focusPointer);
 
