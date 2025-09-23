@@ -52,7 +52,7 @@ public class Main {
     }
 
     public static void openProgram(File file) {
-        Main.nanoTime = System.nanoTime() - nanoTime;
+        nanoTime = System.nanoTime() - nanoTime;
         System.out.println("Time progress since program start: " + nanoTime + " nanoseconds.");
 
         try {
@@ -76,11 +76,11 @@ public class Main {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("saveProgress.txt"))) {
 
-            for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
-                 loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
-                 loopIndex = Main.rightwardPointer.get(loopIndex)) {
+            for (int loopIndex = rightwardPointer.get(positionIndex_withinMainArray_firstElementOfText);
+                 loopIndex != positionIndex_withinMainArray_lastElementOfText;
+                 loopIndex = rightwardPointer.get(loopIndex)) {
 
-                writer.write(Main.mainArray.get(loopIndex));
+                writer.write(mainArray.get(loopIndex));
 
             }
             System.out.println("Character array written to saveProgress.txt.");
@@ -95,7 +95,7 @@ public class Main {
     public static void cursor_moveRightOnly_withinText_void() {
         System.out.println("Right-pointer of cursor: " + rightwardPointer.get(positionIndex_withinMainArray_cursor));
         System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
-        if (Main.positionIndex_withinMainArray_cursor != Main.positionIndex_withinMainArray_lastElementOfText) {
+        if (positionIndex_withinMainArray_cursor != positionIndex_withinMainArray_lastElementOfText) {
             positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
             cursorGUI_shouldMoveRight = true;
         }
@@ -103,7 +103,7 @@ public class Main {
     public static void cursor_moveLeftOnly_withinText_void() {
         System.out.println("Left-pointer of cursor: " + leftwardPointer.get(positionIndex_withinMainArray_cursor));
         System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
-        if (Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor) != Main.positionIndex_withinMainArray_firstElementOfText) {
+        if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
             positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
             cursorGUI_shouldMoveLeft = true;
         }

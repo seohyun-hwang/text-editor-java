@@ -71,7 +71,8 @@ public class JFrameGUI extends JPanel {
         // traverse the LinkedList from the left-edge to the right-edge
         for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
              loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
-             loopIndex = Main.rightwardPointer.get(loopIndex)) {
+             loopIndex = Main.rightwardPointer.get(loopIndex))
+        {
 
             char ch = Main.mainArray.get(loopIndex);
 
