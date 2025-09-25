@@ -58,7 +58,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             System.out.println("Hello1");
-            Main.positionIndex_withinMainArray_cursor = Main.subject_moveLeftOnly_withinLinkedList_void(Main.positionIndex_withinMainArray_cursor);
+            Main.positionIndex_withinMainArray_cursor = Main.subject_moveLeftOnly_withinLinkedList_intReturn(Main.positionIndex_withinMainArray_cursor);
             if (Main.cursorGUI_shouldMoveLeft) {
                 jframeGUI.cursor_moveLeftOnly_withinText(Main.mainArray.get(Main.positionIndex_withinMainArray_cursor));
 

@@ -105,7 +105,7 @@ public class Main {
         }
         return positionIndex_withinMainArray_subject;
     }
-    public static int subject_moveLeftOnly_withinLinkedList_void(int positionIndex_withinMainArray_subject) {
+    public static int subject_moveLeftOnly_withinLinkedList_intReturn(int positionIndex_withinMainArray_subject) {
         System.out.println("Left-pointer of subject: " + leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject));
         System.out.println("Subject position: " + positionIndex_withinMainArray_subject);
         if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject) != positionIndex_withinMainArray_linkedListHead) {
@@ -155,7 +155,7 @@ public class Main {
         else {
             if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_linkedListHead) {
                 // setting up the cursorLeft2Element
-                subject_moveLeftOnly_withinLinkedList_void(positionIndex_withinMainArray_cursor);
+                subject_moveLeftOnly_withinLinkedList_intReturn(positionIndex_withinMainArray_cursor);
                 int left2_fromPositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
                 subject_moveRightOnly_withinLinkedList_intReturn(positionIndex_withinMainArray_cursor);
 
@@ -273,7 +273,7 @@ public class Main {
                 else {
                     if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation) != positionIndex_withinMainArray_linkedListHead) {
                         // setting up the cursorLeft2Element
-                        positionIndex_withinMainArray_actionLocation = subject_moveLeftOnly_withinLinkedList_void(positionIndex_withinMainArray_actionLocation);
+                        positionIndex_withinMainArray_actionLocation = subject_moveLeftOnly_withinLinkedList_intReturn(positionIndex_withinMainArray_actionLocation);
                         int left2_fromPositionIndex_withinMainArray_actionLocation = positionIndex_withinMainArray_actionLocation;
                         positionIndex_withinMainArray_actionLocation = subject_moveRightOnly_withinLinkedList_intReturn(positionIndex_withinMainArray_actionLocation);
 
