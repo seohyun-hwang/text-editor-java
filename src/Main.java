@@ -5,13 +5,14 @@ import java.util.Scanner;
 public class Main {
     // general support variables (within Main class)
     static int positionIndex_withinMainArray_cursor;
-    static final int positionIndex_withinMainArray_firstElementOfText = 0;
-    static final int positionIndex_withinMainArray_lastElementOfText = 1;
+    static final int positionIndex_withinMainArray_linkedListHead = 0;
+    static final int positionIndex_withinMainArray_linkedListTail = 1;
 
     // DoublyLinkedList (for text-character sequencing)
+    // text is represented as a series of characters in a LinkedList exclusively between the head and tail.
     static ArrayList<Character> mainArray = new ArrayList<>();
-    static ArrayList<Integer> leftwardPointer = new ArrayList<>();
-    static ArrayList<Integer> rightwardPointer = new ArrayList<>();
+    static ArrayList<Integer> leftwardPointer_withinLinkedList = new ArrayList<>();
+    static ArrayList<Integer> rightwardPointer_withinLinkedList = new ArrayList<>();
 
     // support variables (for GUI classes)
     static boolean cursorGUI_shouldMoveLeft = false;
@@ -20,25 +21,25 @@ public class Main {
 
     // undo/redo
     static ArrayList<Byte> latestActionType = new ArrayList<>(); // 1: insert; -1: deletion
-    static ArrayList<Integer> undoRedo_referencePointer = new ArrayList<>();
+    static ArrayList<Integer> positionIndices_withinMainArray_undoRedoLocation = new ArrayList<>();
     static int undoCount = 0;
 
     // a stopwatch tool just for fun
     static long nanoTime = System.nanoTime();
 
     public static void main(String[] args) {
-        // setting up the first element
+        // setting up the head (first element)
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
         mainArray.add(null);
-        leftwardPointer.add(null);
-        rightwardPointer.add(1);
+        leftwardPointer_withinLinkedList.add(null);
+        rightwardPointer_withinLinkedList.add(1);
         System.out.println("length of mainArray (firstElementSetup): " + mainArray.size());
 
-        // setting up the last element
+        // setting up the tail (last element)
         System.out.println("length of mainArray (lastElementSetup): " + mainArray.size());
         mainArray.add(null);
-        leftwardPointer.add(0);
-        rightwardPointer.add(null);
+        leftwardPointer_withinLinkedList.add(0);
+        rightwardPointer_withinLinkedList.add(null);
         System.out.println("length of mainArray (lastElementSetup): " + mainArray.size());
 
         // defining that the cursor-position should begin at the last element
@@ -60,10 +61,10 @@ public class Main {
             scanner.useDelimiter(""); // scanner-delimiter set to an empty String
             while (scanner.hasNext()) {
                 char ch = scanner.next().charAt(0); // going through file character-by-character
-                Main.insertChar_withinText(ch);
+                Main.insertChar_withinLinkedList(ch);
             }
 
-            positionIndex_withinMainArray_cursor = positionIndex_withinMainArray_lastElementOfText;
+            positionIndex_withinMainArray_cursor = positionIndex_withinMainArray_linkedListTail;
         } catch (FileNotFoundException e) {
             System.out.println("ERROR: FileNotFound");
             e.printStackTrace();
@@ -76,9 +77,10 @@ public class Main {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("saveProgress.txt"))) {
 
-            for (int loopIndex = rightwardPointer.get(positionIndex_withinMainArray_firstElementOfText);
-                 loopIndex != positionIndex_withinMainArray_lastElementOfText;
-                 loopIndex = rightwardPointer.get(loopIndex)) {
+            for (int loopIndex = rightwardPointer_withinLinkedList.get(positionIndex_withinMainArray_linkedListHead);
+                 loopIndex != positionIndex_withinMainArray_linkedListTail;
+                 loopIndex = rightwardPointer_withinLinkedList.get(loopIndex))
+            {
 
                 writer.write(mainArray.get(loopIndex));
 
@@ -92,156 +94,214 @@ public class Main {
         System.exit(0);
     }
 
-    public static void cursor_moveRightOnly_withinText_void() {
-        System.out.println("Right-pointer of cursor: " + rightwardPointer.get(positionIndex_withinMainArray_cursor));
-        System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
-        if (positionIndex_withinMainArray_cursor != positionIndex_withinMainArray_lastElementOfText) {
-            positionIndex_withinMainArray_cursor = rightwardPointer.get(positionIndex_withinMainArray_cursor);
+    public static int subject_moveRightOnly_withinLinkedList_intReturn(int positionIndex_withinMainArray_subject) {
+        System.out.println("Right-pointer of subject: " + rightwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject));
+        System.out.println("Subject position: " + positionIndex_withinMainArray_subject);
+        if (positionIndex_withinMainArray_subject != positionIndex_withinMainArray_linkedListTail) {
+            positionIndex_withinMainArray_subject = rightwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject);
+
             cursorGUI_shouldMoveRight = true;
+            return positionIndex_withinMainArray_subject;
         }
+        return positionIndex_withinMainArray_subject;
     }
-    public static void cursor_moveLeftOnly_withinText_void() {
-        System.out.println("Left-pointer of cursor: " + leftwardPointer.get(positionIndex_withinMainArray_cursor));
-        System.out.println("Cursor: " + positionIndex_withinMainArray_cursor);
-        if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
-            positionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+    public static int subject_moveLeftOnly_withinLinkedList_void(int positionIndex_withinMainArray_subject) {
+        System.out.println("Left-pointer of subject: " + leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject));
+        System.out.println("Subject position: " + positionIndex_withinMainArray_subject);
+        if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject) != positionIndex_withinMainArray_linkedListHead) {
+            positionIndex_withinMainArray_subject = leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_subject);
+
             cursorGUI_shouldMoveLeft = true;
+            return positionIndex_withinMainArray_subject;
         }
+        return positionIndex_withinMainArray_subject;
     }
 
-    public static void insertChar_withinText(char insertedChar) { // always inserting to the left of the cursor-position
+    public static void insertChar_withinLinkedList(char insertedChar) { // always inserting to the left of the cursor-position
         mainArray.add(insertedChar);
-        leftwardPointer.add(null);
-        rightwardPointer.add(null);
+        leftwardPointer_withinLinkedList.add(null);
+        rightwardPointer_withinLinkedList.add(null);
 
-        undoRedo_referencePointer.add(mainArray.size() - 1);
+        positionIndices_withinMainArray_undoRedoLocation.add(mainArray.size() - 1);
         latestActionType.add((byte) 1);
         undoCount = 0;
 
         System.out.println("length of mainArray (inserting): " + mainArray.size());
-        if (leftwardPointer.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_firstElementOfText) { // if cursor is at the left-edge of the document
+        if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is at the left-edge of the document
 
             // back-and-forth pointer-pair: firstElement <> newElement
-            rightwardPointer.set(positionIndex_withinMainArray_firstElementOfText, mainArray.size() - 1);
-            leftwardPointer.set(mainArray.size() - 1, positionIndex_withinMainArray_firstElementOfText);
+            rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, mainArray.size() - 1);
+            leftwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_linkedListHead);
 
-            if (positionIndex_withinMainArray_cursor != positionIndex_withinMainArray_lastElementOfText) {
+            if (positionIndex_withinMainArray_cursor != positionIndex_withinMainArray_linkedListTail) {
                 // back-and-forth pointer-pair: newElement <> cursorElement
-                leftwardPointer.set(positionIndex_withinMainArray_cursor, mainArray.size() - 1);
-                rightwardPointer.set(mainArray.size() - 1, positionIndex_withinMainArray_cursor);
+                leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_cursor, mainArray.size() - 1);
+                rightwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_cursor);
             }
         }
-        if (positionIndex_withinMainArray_cursor == positionIndex_withinMainArray_lastElementOfText) { // if cursor is at the right-edge of the document
-            int left2_fromPositionIndex_withinMainArray_lastElement = leftwardPointer.get(positionIndex_withinMainArray_cursor);
+        if (positionIndex_withinMainArray_cursor == positionIndex_withinMainArray_linkedListTail) { // if cursor is at the right-edge of the document
+            int left2_fromPositionIndex_withinMainArray_lastElement = leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor);
 
             // back-and-forth pointer-pair repairing: lastLeft2Element <> newElement
-            leftwardPointer.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_lastElement);
-            rightwardPointer.set(left2_fromPositionIndex_withinMainArray_lastElement, mainArray.size() - 1);
+            leftwardPointer_withinLinkedList.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_lastElement);
+            rightwardPointer_withinLinkedList.set(left2_fromPositionIndex_withinMainArray_lastElement, mainArray.size() - 1);
 
             // back-and-forth pointer-pair: newElement <> lastElement
-            leftwardPointer.set(positionIndex_withinMainArray_lastElementOfText, mainArray.size() - 1);
-            rightwardPointer.set(mainArray.size() - 1, positionIndex_withinMainArray_lastElementOfText);
+            leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListTail, mainArray.size() - 1);
+            rightwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_linkedListTail);
 
 
         }
         else {
-            if (leftwardPointer.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_firstElementOfText) {
+            if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) != positionIndex_withinMainArray_linkedListHead) {
                 // setting up the cursorLeft2Element
-                cursor_moveLeftOnly_withinText_void();
+                subject_moveLeftOnly_withinLinkedList_void(positionIndex_withinMainArray_cursor);
                 int left2_fromPositionIndex_withinMainArray_cursor = positionIndex_withinMainArray_cursor;
-                cursor_moveRightOnly_withinText_void();
+                subject_moveRightOnly_withinLinkedList_intReturn(positionIndex_withinMainArray_cursor);
 
                 // back-and-forth pointer-pair: newElement <> cursorElement
-                leftwardPointer.set(positionIndex_withinMainArray_cursor, mainArray.size() - 1);
-                rightwardPointer.set(mainArray.size() - 1, positionIndex_withinMainArray_cursor);
+                leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_cursor, mainArray.size() - 1);
+                rightwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_cursor);
 
                 // back-and-forth pointer-pair: cursorLeft2Element <> newElement
-                rightwardPointer.set(left2_fromPositionIndex_withinMainArray_cursor, mainArray.size() - 1);
-                leftwardPointer.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_cursor);
+                rightwardPointer_withinLinkedList.set(left2_fromPositionIndex_withinMainArray_cursor, mainArray.size() - 1);
+                leftwardPointer_withinLinkedList.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_cursor);
             }
         }
 
     }
-    public static void deleteChar_withinText() { // always deleting to the left of the cursor-position
+    public static void deleteChar_withinLinkedList() { // always deleting to the left of the cursor-position
 
-        if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) != null) {
-            undoRedo_referencePointer.add(positionIndex_withinMainArray_cursor);
-            latestActionType.add((byte) -1);
-            undoCount = 0;
+        int positionIndex_withinMainArray_undoRedoLocation = leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor);
 
-            if (leftwardPointer.get(leftwardPointer.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_firstElementOfText) {
+        if (leftwardPointer_withinLinkedList.get(leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor)) != null) {
+            if (leftwardPointer_withinLinkedList.get(leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor)) > positionIndex_withinMainArray_linkedListHead) {
 
-                int left1_fromPositionIndex_withinMainArray_cursor = leftwardPointer.get(positionIndex_withinMainArray_cursor);
-                if (left1_fromPositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_firstElementOfText) {
+                int left1_fromPositionIndex_withinMainArray_cursor = leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor);
+                if (left1_fromPositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_linkedListHead) {
                     return; // nothing to delete
                 }
 
-                int left2_fromPositionIndex_withinMainArray_cursor = leftwardPointer.get(left1_fromPositionIndex_withinMainArray_cursor);
+                int left2_fromPositionIndex_withinMainArray_cursor = leftwardPointer_withinLinkedList.get(left1_fromPositionIndex_withinMainArray_cursor);
                 // back-and-forth pointer-pair repairing: cursorLeft2Element <> cursorElement
-                leftwardPointer.set(positionIndex_withinMainArray_cursor, left2_fromPositionIndex_withinMainArray_cursor);
-                rightwardPointer.set(left2_fromPositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_cursor);
+                leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_cursor, left2_fromPositionIndex_withinMainArray_cursor);
+                rightwardPointer_withinLinkedList.set(left2_fromPositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_cursor);
 
+
+                positionIndices_withinMainArray_undoRedoLocation.add(positionIndex_withinMainArray_undoRedoLocation);
+                latestActionType.add((byte) -1);
+                undoCount = 0;
                 cursorGUI_shouldAdaptToDeletion = true;
             }
             else {
-                if (leftwardPointer.get(positionIndex_withinMainArray_cursor) > positionIndex_withinMainArray_firstElementOfText) {
+                if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) > positionIndex_withinMainArray_linkedListHead) {
                     // back-and-forth pointer-pair repairing: firstElement <> cursorElement
-                    leftwardPointer.set(positionIndex_withinMainArray_cursor, positionIndex_withinMainArray_firstElementOfText);
-                    rightwardPointer.set(positionIndex_withinMainArray_firstElementOfText, positionIndex_withinMainArray_cursor);
+                    leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_cursor, positionIndex_withinMainArray_linkedListHead);
+                    rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, positionIndex_withinMainArray_cursor);
 
+
+                    positionIndices_withinMainArray_undoRedoLocation.add(positionIndex_withinMainArray_undoRedoLocation);
+                    latestActionType.add((byte) -1);
+                    undoCount = 0;
                     cursorGUI_shouldAdaptToDeletion = true;
                 }
             }
         }
     }
 
-    public static void undo() { //
+    public static void undo_anAction() { //
         if (mainArray.size() > 2) { // perform the undo-action ONLY IF there's more than just the left-edge and right-edge of the text
-            if (latestActionType.get(latestActionType.size() - 1 - undoCount) == -1) { // if the latest non-arrow-key action is a deletion
-                int focusPointer = undoRedo_referencePointer.get(undoRedo_referencePointer.size() - 1 - undoCount);
+            undoCount++;
 
-                if (leftwardPointer.get(leftwardPointer.get(focusPointer)) > positionIndex_withinMainArray_firstElementOfText) {
+            if (latestActionType.get((latestActionType.size() - 1) - undoCount) == 1) { // if the latest non-arrow-key action is an insertion
+                // a pointer to the place where the action was done
+                int positionIndex_withinMainArray_actionLocation = positionIndices_withinMainArray_undoRedoLocation.get((positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount);
 
-                    int minus1PositionIndex_withinMainArray_cursor = leftwardPointer.get(focusPointer);
-                    if (minus1PositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_firstElementOfText) {
+                if (leftwardPointer_withinLinkedList.get(leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation)) > positionIndex_withinMainArray_linkedListHead) {
+
+                    int left1_fromPositionIndex_withinMainArray_cursor = leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation);
+                    if (left1_fromPositionIndex_withinMainArray_cursor == positionIndex_withinMainArray_linkedListHead) {
                         return; // nothing to delete
                     }
 
-                    int minus2PositionIndex_withinMainArray_cursor = leftwardPointer.get(minus1PositionIndex_withinMainArray_cursor);
-                    // back-and-forth pointer-pair repairing: cursorLeft2Element <> cursorElement
-                    leftwardPointer.set(focusPointer, minus2PositionIndex_withinMainArray_cursor);
-                    rightwardPointer.set(minus2PositionIndex_withinMainArray_cursor, focusPointer);
+                    int left2_fromPositionIndex_withinMainArray_cursor = leftwardPointer_withinLinkedList.get(left1_fromPositionIndex_withinMainArray_cursor);
+                    // back-and-forth pointer-pair repairing: cursorLeft2Element <> actionLocationElement
+                    leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_actionLocation, left2_fromPositionIndex_withinMainArray_cursor);
+                    rightwardPointer_withinLinkedList.set(left2_fromPositionIndex_withinMainArray_cursor, positionIndex_withinMainArray_actionLocation);
 
                     cursorGUI_shouldMoveLeft = true;
                 }
                 else {
-                    if (leftwardPointer.get(focusPointer) > positionIndex_withinMainArray_firstElementOfText) {
-                        // back-and-forth pointer-pair repairing: firstElement <> cursorElement
-                        leftwardPointer.set(focusPointer, positionIndex_withinMainArray_firstElementOfText);
-                        rightwardPointer.set(positionIndex_withinMainArray_firstElementOfText, focusPointer);
+                    if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation) > positionIndex_withinMainArray_linkedListHead) {
+                        // back-and-forth pointer-pair repairing: firstElement <> actionLocationElement
+                        leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_actionLocation, positionIndex_withinMainArray_linkedListHead);
+                        rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, positionIndex_withinMainArray_actionLocation);
 
                         cursorGUI_shouldMoveLeft = true;
                     }
                 }
             }
-            else if (latestActionType.get(latestActionType.size() - 1 - undoCount) == 1) { // if the latest non-arrow-key action is an insertion
+            else if (latestActionType.get(latestActionType.size() - 1 - undoCount) == -1) { // if the latest non-arrow-key action is a deletion
+                // a pointer to the place where the action was done
+                int positionIndex_withinMainArray_actionLocation = positionIndices_withinMainArray_undoRedoLocation.get((positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount);
 
+                if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation) == positionIndex_withinMainArray_linkedListHead) { // if cursor is at the left-edge of the document
+
+                    // back-and-forth pointer-pair: firstElement <> newElement
+                    rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, mainArray.size() - 1);
+                    leftwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_linkedListHead);
+
+                    if (positionIndex_withinMainArray_actionLocation != positionIndex_withinMainArray_linkedListTail) {
+                        // back-and-forth pointer-pair: newElement <> actionLocationElement
+                        leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_actionLocation, mainArray.size() - 1);
+                        rightwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_actionLocation);
+                    }
+                }
+                if (positionIndex_withinMainArray_actionLocation == positionIndex_withinMainArray_linkedListTail) { // if cursor is at the right-edge of the document
+                    int left2_fromPositionIndex_withinMainArray_lastElement = leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor);
+
+                    // back-and-forth pointer-pair repairing: lastLeft2Element <> newElement
+                    leftwardPointer_withinLinkedList.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_lastElement);
+                    rightwardPointer_withinLinkedList.set(left2_fromPositionIndex_withinMainArray_lastElement, mainArray.size() - 1);
+
+                    // back-and-forth pointer-pair: newElement <> lastElement
+                    leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListTail, mainArray.size() - 1);
+                    rightwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_linkedListTail);
+
+
+                }
+                else {
+                    if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation) != positionIndex_withinMainArray_linkedListHead) {
+                        // setting up the cursorLeft2Element
+                        positionIndex_withinMainArray_actionLocation = subject_moveLeftOnly_withinLinkedList_void(positionIndex_withinMainArray_actionLocation);
+                        int left2_fromPositionIndex_withinMainArray_actionLocation = positionIndex_withinMainArray_actionLocation;
+                        positionIndex_withinMainArray_actionLocation = subject_moveRightOnly_withinLinkedList_intReturn(positionIndex_withinMainArray_actionLocation);
+
+                        // back-and-forth pointer-pair: newElement <> actionLocationElement
+                        leftwardPointer_withinLinkedList.set(positionIndex_withinMainArray_actionLocation, mainArray.size() - 1);
+                        rightwardPointer_withinLinkedList.set(mainArray.size() - 1, positionIndex_withinMainArray_actionLocation);
+
+                        // back-and-forth pointer-pair: actionLocationLeft2Element <> newElement
+                        rightwardPointer_withinLinkedList.set(left2_fromPositionIndex_withinMainArray_actionLocation, mainArray.size() - 1);
+                        leftwardPointer_withinLinkedList.set(mainArray.size() - 1, left2_fromPositionIndex_withinMainArray_actionLocation);
+                    }
+                }
             }
-            undoCount++;
         }
         else {
             System.out.println("Nothing to undo.");
         }
     }
-    public static void redo() {
+    public static void redo_anUndoneAction() {
         if (undoCount > 0) { // perform the redo-action ONLY IF there are any undo actions to work with
+            undoCount--;
+
             if (latestActionType.get(latestActionType.size() - 1) == -1 - undoCount) { // if the latest non-arrow-key action is a deletion
 
             }
             else if (latestActionType.get(latestActionType.size() - 1 - undoCount) == 1) { // if the latest non-arrow-key action is an insertion
 
             }
-            undoCount--;
         }
         else {
             System.out.println("Nothing to redo.");

@@ -40,7 +40,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
     @Override
     public void keyTyped(KeyEvent e) {
         if (Character.isLetterOrDigit(e.getKeyChar()) || isValid_nonalphanumericalTextCharacter(e.getKeyChar(), validTextCharacters)) { // insertion-key typed (alphanumeric character or any other character defined as valid)
-            Main.insertChar_withinText(e.getKeyChar());
+            Main.insertChar_withinLinkedList(e.getKeyChar());
             jframeGUI.addChar(e.getKeyChar());
         }
     }
@@ -48,8 +48,8 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            char ch = Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor));
-            Main.deleteChar_withinText();
+            char ch = Main.mainArray.get(Main.leftwardPointer_withinLinkedList.get(Main.positionIndex_withinMainArray_cursor));
+            Main.deleteChar_withinLinkedList();
             if (Main.cursorGUI_shouldAdaptToDeletion) {
                 jframeGUI.cursor_moveLeftOnly_withinText(ch);
                 jframeGUI.redrawAllText_withWordWrap();
@@ -58,7 +58,7 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             System.out.println("Hello1");
-            Main.cursor_moveLeftOnly_withinText_void();
+            Main.positionIndex_withinMainArray_cursor = Main.subject_moveLeftOnly_withinLinkedList_void(Main.positionIndex_withinMainArray_cursor);
             if (Main.cursorGUI_shouldMoveLeft) {
                 jframeGUI.cursor_moveLeftOnly_withinText(Main.mainArray.get(Main.positionIndex_withinMainArray_cursor));
 
@@ -68,10 +68,10 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             System.out.println("Hello2");
             System.out.println("Cursor: " + Main.positionIndex_withinMainArray_cursor);
 
-            Main.cursor_moveRightOnly_withinText_void();
+            Main.positionIndex_withinMainArray_cursor = Main.subject_moveRightOnly_withinLinkedList_intReturn(Main.positionIndex_withinMainArray_cursor);
             if (Main.cursorGUI_shouldMoveRight) {
-                if (Main.positionIndex_withinMainArray_cursor == Main.positionIndex_withinMainArray_lastElementOfText) {
-                    jframeGUI.cursor_moveRightOnly_withinText(Main.mainArray.get(Main.leftwardPointer.get(Main.positionIndex_withinMainArray_cursor)));
+                if (Main.positionIndex_withinMainArray_cursor == Main.positionIndex_withinMainArray_linkedListTail) {
+                    jframeGUI.cursor_moveRightOnly_withinText(Main.mainArray.get(Main.leftwardPointer_withinLinkedList.get(Main.positionIndex_withinMainArray_cursor)));
                 }
                 else {
                     jframeGUI.cursor_moveRightOnly_withinText(Main.mainArray.get(Main.positionIndex_withinMainArray_cursor));

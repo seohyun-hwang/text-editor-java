@@ -69,9 +69,9 @@ public class JFrameGUI extends JPanel {
         int drawY = 40;
 
         // traverse the LinkedList from the left-edge to the right-edge
-        for (int loopIndex = Main.rightwardPointer.get(Main.positionIndex_withinMainArray_firstElementOfText);
-             loopIndex != Main.positionIndex_withinMainArray_lastElementOfText;
-             loopIndex = Main.rightwardPointer.get(loopIndex))
+        for (int loopIndex = Main.rightwardPointer_withinLinkedList.get(Main.positionIndex_withinMainArray_linkedListHead);
+             loopIndex != Main.positionIndex_withinMainArray_linkedListTail;
+             loopIndex = Main.rightwardPointer_withinLinkedList.get(loopIndex))
         {
 
             char ch = Main.mainArray.get(loopIndex);
@@ -97,7 +97,7 @@ public class JFrameGUI extends JPanel {
         }
 
         // recording the GUI-cursor-position IF the cursorIndex_withinMainArray == lastElementIndex_withinMainArray
-        if (Main.positionIndex_withinMainArray_cursor == Main.positionIndex_withinMainArray_lastElementOfText) {
+        if (Main.positionIndex_withinMainArray_cursor == Main.positionIndex_withinMainArray_linkedListTail) {
             cursorX = drawX;
             cursorY = drawY;
         }
