@@ -138,7 +138,7 @@ public class Main {
         latestActionType.add((byte) 1);
 
         System.out.println("length of mainArray (inserting): " + mainArray.size());
-        if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is at the head of the LinkedList
+        if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is next to the head of the LinkedList
 
             // back-and-forth pointer-pair: headElement <> newElement
             rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, mainArray.size() - 1);
@@ -275,7 +275,7 @@ public class Main {
                 positionIndex_withinMainArray_cursor = rightwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation);
 
 
-                if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is at the head of the LinkedList
+                if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is next to the head of the LinkedList
 
                     // back-and-forth pointer-pair: headElement <> actionLocationElement
                     rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, positionIndex_withinMainArray_actionLocation);
@@ -339,7 +339,7 @@ public class Main {
                 positionIndex_withinMainArray_cursor = rightwardPointer_withinLinkedList.get(positionIndex_withinMainArray_actionLocation);
 
 
-                if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is at the head of the LinkedList
+                if (leftwardPointer_withinLinkedList.get(positionIndex_withinMainArray_cursor) == positionIndex_withinMainArray_linkedListHead) { // if cursor is next to the head of the LinkedList
 
                     // back-and-forth pointer-pair: headElement <> actionLocationElement
                     rightwardPointer_withinLinkedList.set(positionIndex_withinMainArray_linkedListHead, positionIndex_withinMainArray_actionLocation);
