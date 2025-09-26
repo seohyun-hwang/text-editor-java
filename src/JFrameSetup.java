@@ -79,6 +79,22 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
 
                 Main.cursorGUI_shouldMoveRight = false;
             }
+        } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Z) {
+            System.out.println("Ctrl + Z combination detected!");
+            Main.undo_anAction();
+            jframeGUI.redrawAllText_withWordWrap();
+        } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Y) {
+            System.out.println("Ctrl + Y combination detected!");
+            Main.redo_anUndoneAction();
+            jframeGUI.redrawAllText_withWordWrap();
+        } else if (e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_Z) {
+            System.out.println("Command + Z combination detected!");
+            Main.undo_anAction();
+            jframeGUI.redrawAllText_withWordWrap();
+        } else if (e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_Y) {
+            System.out.println("Command + Y combination detected!");
+            Main.redo_anUndoneAction();
+            jframeGUI.redrawAllText_withWordWrap();
         }
     }
 
@@ -88,7 +104,9 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             System.out.println("Right arrow key released!");
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             System.out.println("Left arrow key released!");
-        }
+        } /*else if (e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyCode() == KeyEvent.VK_META) { // VK_CONTROL for Windows/Linux "Ctrl" key ; VK_META for macOS "command" key
+            ctrlKeyPressed = false;
+        }*/
 
         System.out.println("Released key-CHAR: " + e.getKeyChar());
         System.out.println("Released key-CODE: " + e.getKeyCode());
