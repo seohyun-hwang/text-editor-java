@@ -83,18 +83,22 @@ public class JFrameSetup extends JFrame implements KeyListener, WindowListener {
             System.out.println("Ctrl + Z combination detected!");
             Main.undo_anAction();
             jframeGUI.redrawAllText_withWordWrap();
+            System.out.println("Ctrl + Z confirmed! undo-count: " + Main.undoCount);
         } else if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Y) {
             System.out.println("Ctrl + Y combination detected!");
             Main.redo_anUndoneAction();
             jframeGUI.redrawAllText_withWordWrap();
+            System.out.println("Ctrl + Y confirmed! undo-count: " + Main.undoCount);
         } else if (e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_Z) {
             System.out.println("Command + Z combination detected!");
             Main.undo_anAction();
             jframeGUI.redrawAllText_withWordWrap();
+            System.out.println("Command + Z confirmed! undo-count: " + Main.undoCount);
         } else if (e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_Y) {
             System.out.println("Command + Y combination detected!");
             Main.redo_anUndoneAction();
             jframeGUI.redrawAllText_withWordWrap();
+            System.out.println("Command + Y confirmed! undo-count: " + Main.undoCount);
         }
     }
 

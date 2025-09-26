@@ -125,7 +125,10 @@ public class Main {
         rightwardPointer_withinLinkedList.add(null);
 
         if (undoCount > 0 && !positionIndices_withinMainArray_undoRedoLocation.isEmpty()) {
-            for (int i = positionIndices_withinMainArray_undoRedoLocation.size() - 1; i > (positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount; i--) {
+            System.out.println("undo-count: " + undoCount);
+            System.out.println("undoRedo stack size: " + positionIndices_withinMainArray_undoRedoLocation.size());
+            System.out.println("latest-action-type stack size: " + latestActionType.size());
+            for (int i = positionIndices_withinMainArray_undoRedoLocation.size() - 1; (positionIndices_withinMainArray_undoRedoLocation.size() - undoCount) >= 0; i--) {
                 positionIndices_withinMainArray_undoRedoLocation.remove(i);
                 latestActionType.remove(i);
             }
@@ -196,7 +199,10 @@ public class Main {
 
 
                 if (undoCount > 0 && !positionIndices_withinMainArray_undoRedoLocation.isEmpty()) {
-                    for (int i = positionIndices_withinMainArray_undoRedoLocation.size() - 1; i > (positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount; i--) {
+                    System.out.println("undo-count: " + undoCount);
+                    System.out.println("undoRedo stack size: " + positionIndices_withinMainArray_undoRedoLocation.size());
+                    System.out.println("latest-action-type stack size: " + latestActionType.size());
+                    for (int i = positionIndices_withinMainArray_undoRedoLocation.size() - 1; (positionIndices_withinMainArray_undoRedoLocation.size() - undoCount) >= 0; i--) {
                         positionIndices_withinMainArray_undoRedoLocation.remove(i);
                         latestActionType.remove(i);
                     }
@@ -214,7 +220,10 @@ public class Main {
 
 
                     if (undoCount > 0 && !positionIndices_withinMainArray_undoRedoLocation.isEmpty()) {
-                        for (int i = positionIndices_withinMainArray_undoRedoLocation.size() - 1; i > (positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount; i--) {
+                        System.out.println("undo-count: " + undoCount);
+                        System.out.println("undoRedo stack size: " + positionIndices_withinMainArray_undoRedoLocation.size());
+                        System.out.println("latest-action-type stack size: " + latestActionType.size());
+                        for (int i = positionIndices_withinMainArray_undoRedoLocation.size() - 1; (positionIndices_withinMainArray_undoRedoLocation.size() - undoCount) >= 0; i--) {
                             positionIndices_withinMainArray_undoRedoLocation.remove(i);
                             latestActionType.remove(i);
                         }
@@ -230,6 +239,8 @@ public class Main {
 
     public static void undo_anAction() { //
         if (!latestActionType.isEmpty() && latestActionType.size() - undoCount > 0 && mainArray.size() > 2) { // perform the undo-action ONLY IF there's more than just the left-edge and right-edge of the text
+            System.out.println("undo-count: " + undoCount);
+            System.out.println("latest-action-type stack size: " + latestActionType.size());
             if (latestActionType.get((latestActionType.size() - 1) - undoCount) == 1) { // if the latest non-arrow-key action is an insertion, delete the inserted character
                 // a pointer to the place where the action was done
                 int positionIndex_withinMainArray_actionLocation = positionIndices_withinMainArray_undoRedoLocation.get((positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount);
@@ -317,6 +328,10 @@ public class Main {
     }
     public static void redo_anUndoneAction() {
         if (!latestActionType.isEmpty() && undoCount > 0) { // perform the redo-action ONLY IF there are any undo actions to work with
+            undoCount--;
+
+            System.out.println("undo-count: " + undoCount);
+            System.out.println("latest-action-type stack size: " + latestActionType.size());
             if (latestActionType.get((latestActionType.size() - 1) - undoCount) == 1) { // if the latest non-arrow-key action is an insertion, the undo was a deletion, which means the redo should be an insertion
                 int positionIndex_withinMainArray_actionLocation = positionIndices_withinMainArray_undoRedoLocation.get((positionIndices_withinMainArray_undoRedoLocation.size() - 1) - undoCount);
 
@@ -394,9 +409,6 @@ public class Main {
 
                 }
             }
-
-
-            undoCount--;
         }
         else {
             System.out.println("Nothing to redo.");
