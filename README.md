@@ -1,6 +1,6 @@
 ALPHA STAGE!<br>
 No bugs have been identified in the code as of now. Also, there are more features to be implemented but the essential functionalities are already there.<br>
-<b>Description:</b> Implemented in Java: JFrame GUI, character insertion/deletion, cursor-position change (using left/right arrow keys), DoublyLinkedList, line-wrapping, undo/redo, persistent storage.<br>
+<b>Description:</b> Implemented via JFrame GUI: character insertion/deletion (utilizing doubly-linked-lists constructed of ArrayLists), cursor-reposition (w/ left/right arrow-keys), line-wrap, undo/redo (utilizing stacks for edit-tracking), persistent storage.<br>
 <b>Practice mission:</b> Constructing LinkedLists out of ArrayLists; coordinating between GUI and behind-the-scenes; the GUI itself; user-input processing; OOP; persistent-storage management; stacks (for undo/redo)
 
 Undo key-combination: Ctrl+Z (Windows/Linux) or Command+Z (macOS)
